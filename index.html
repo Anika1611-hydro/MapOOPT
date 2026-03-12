@@ -25,17 +25,16 @@
             margin: 0;
         }
         
-        /* Стили для счетчика */
-        .counter-top {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 5px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+       .counter-top {
+    position: absolute;
+    top: 10px;
+    left: 10px;        /* было right: 10px, стало left: 10px */
+    z-index: 1000;
+    background: white;
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
         
         /* Стили для сообщения о загрузке */
         .loading-overlay {
@@ -100,7 +99,7 @@
             margin-top: 20px;
         }
         </style>
-        <title>Данные об Особо охраняемых природных территориях с data.nextgis.com</title>
+        <title>Данные об ООПТ и ГП</title>
     </head>
     <body>
         <!-- СООБЩЕНИЕ О ЗАГРУЗКЕ -->
@@ -155,10 +154,10 @@
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <!-- Файлы данных (лежат в корне) -->
-        <script src="_1.js"></script>
-        <script src="_2.js"></script>
-        <script src="_3.js"></script>
-        <script src="_4.js"></script>
+        <script src="data/_1.js"></script>
+        <script src="data/_2.js"></script>
+        <script src="data/_3.js"></script>
+        <script src="data/_4.js"></script>
         
         <!-- СКРИПТ ДЛЯ УПРАВЛЕНИЯ ЗАГРУЗКОЙ -->
         <script>
