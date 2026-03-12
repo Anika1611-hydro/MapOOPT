@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>ООПТ на карте NextGIS</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        h1:before {
+            content: "🗺️";
+            font-size: 28px;
+        }
+        
+        .map-container {
+            position: relative;
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Контейнер для карты - адаптивный */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%; /* Соотношение сторон 4:3 */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .map-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Счетчик поверх карты */
+        .counter-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: auto;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        /* Альтернативный вариант - если хотите счетчик сверху */
+        .counter-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: auto;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .counter-info {
+            color: #666;
+            font-size: 14px;
+            border-left: 1px solid #ddd;
+            padding-left: 10px;
+        }
+        
+        .counter-info span {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .footer {
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        /* Для мобильных */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .counter-overlay, .counter-top {
+                padding: 5px 8px;
+            }
+            
+            .counter-info {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Особо охраняемые природные территории</h1>
+        
+        <!-- Контейнер с картой -->
+        <div class="map-container">
+            <div class="map-wrapper">
+                <!-- ВАША КАРТА NEXTGIS (вставлен ваш код) -->
+                <iframe 
+                    src="https://mapoopt.nextgis.com/resource/19/display/tiny?angle=0&zoom=5&styles=12%2C8%2C6%2C4&linkMainMap=false&events=true&panel=identify&controls=ml%2Czi%2Czo&panels=identify&base=basemap_0&lon=36.9783&lat=62.0230" 
+                    allowfullscreen>
+                </iframe>
+                
+                <!-- СЧЕТЧИК LIVENTERNET (поверх карты, справа снизу) -->
+                <div class="counter-overlay">
+                    <!--LiveInternet counter-->
+                    <a href="https://www.liveinternet.ru/click" target="_blank">
+                        <img id="licntA113" width="88" height="31" style="border:0" 
+                             title="LiveInternet: показано количество просмотров"
+                             src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                             alt=""/>
+                    </a>
+                    <script>
+                    (function(d,s){
+                        d.getElementById("licntA113").src = 
+                        "https://counter.yadro.ru/hit?t44.6;r" + 
+                        escape(d.referrer) +
+                        ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                        (s.colorDepth?s.colorDepth:s.pixelDepth)) + 
+                        ";u" + escape(d.URL) +
+                        ";h" + escape(d.title.substring(0,150)) + 
+                        ";" + Math.random()
+                    })(document,screen)
+                    </script>
+                    <!--/LiveInternet-->
+                    
+                    <div class="counter-info">
+                        👁️ <span id="visitor-count">ООПТ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Информация под картой -->
+        <div class="footer">
+            <p>⚡ Карта обновляется автоматически при изменениях в NextGIS</p>
+            <p>© Проект создан в QGIS и опубликован через NextGIS Connect</p>
+        </div>
+    </div>
+    
+    <!-- Небольшой скрипт для отображения даты -->
+    <script>
+        // Можно добавить дату последнего обновления
+        const footer = document.querySelector('.footer p:first-child');
+        const date = new Date().toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        footer.innerHTML = `⚡ Карта обновляется автоматически при изменениях в NextGIS • последнее обновление: ${date}`;
+    </script>
+</body>
+</html>
