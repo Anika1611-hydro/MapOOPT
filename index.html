@@ -160,45 +160,59 @@
         <script src="data/_4.js"></script>
         
         <!-- СКРИПТ ДЛЯ УПРАВЛЕНИЯ ЗАГРУЗКОЙ -->
-        <script>
-        // Функция для скрытия сообщения о загрузке
-        function hideLoadingMessage() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                setTimeout(() => {
-                    overlay.classList.add('hidden');
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                    }, 500);
-                }, 1000);
-            }
+<script>
+// Функция для скрытия сообщения о загрузке
+function hideLoadingMessage() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+        }, 1000);
+    }
+}
+
+// Проверяем, загрузились ли все данные
+function checkDataLoaded() {
+    if (typeof json__1 !== 'undefined' && 
+        typeof json__2 !== 'undefined' && 
+        typeof json__3 !== 'undefined' && 
+        typeof json__4 !== 'undefined') {
+        console.log('Все данные загружены!');
+        return true;
+    }
+    return false;
+}
+
+// Ждем загрузки данных
+function waitForData() {
+    if (checkDataLoaded()) {
+        // Данные есть, можно инициализировать карту
+        if (typeof initMap === 'function') {
+            initMap();
         }
-        
-        // Следим за загрузкой карты
-        function waitForMap() {
-            if (typeof map !== 'undefined' && map && 
-                typeof layer__1 !== 'undefined' && 
-                typeof layer__2 !== 'undefined' && 
-                typeof layer__3 !== 'undefined' && 
-                typeof layer__4 !== 'undefined') {
-                hideLoadingMessage();
-            } else {
-                setTimeout(waitForMap, 100);
-            }
-        }
-        
-        // Страховка - скрываем через 5 секунд
-        setTimeout(hideLoadingMessage, 5000);
-        
-        // Запускаем проверку
-        document.addEventListener('DOMContentLoaded', waitForMap);
-        window.addEventListener('load', function() {
-            setTimeout(waitForMap, 500);
-        });
-        </script>
+        hideLoadingMessage();
+    } else {
+        console.log('Ждем данные...');
+        setTimeout(waitForData, 100);
+    }
+}
+
+// Страховка - скрываем через 8 секунд в любом случае
+setTimeout(hideLoadingMessage, 8000);
+
+// Запускаем проверку
+document.addEventListener('DOMContentLoaded', waitForData);
+window.addEventListener('load', function() {
+    setTimeout(waitForData, 500);
+});
+</script>
         
         <!-- ОСНОВНОЙ СКРИПТ КАРТЫ -->
         <script>
+		function initMap() {
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
@@ -972,6 +986,8 @@
         map.on("layerremove", function(){
             resetLabels([layer__2,layer__4]);
         });
+			 console.log('Карта инициализирована!');
+}
         </script>        
     </body>
 </html>
