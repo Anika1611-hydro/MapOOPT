@@ -24,11 +24,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Inject Hugging Face Token
+      - name: Inject Yandex Credentials
         run: |
-          # Эта команда ищет в index.html строку const HF_TOKEN = "" 
-          # и заменяет её на const HF_TOKEN = "ваш_токен"
-          sed -i "s|const HF_TOKEN = \"\"|const HF_TOKEN = \"${{ secrets.HF_TOKEN }}\"|" index.html
+          sed -i "s|const YANDEX_API_KEY = \"\"|const YANDEX_API_KEY = \"${{ secrets.YANDEX_API_KEY }}\"|" index.html
+          sed -i "s|const YANDEX_FOLDER_ID = \"\"|const YANDEX_FOLDER_ID = \"${{ secrets.YANDEX_FOLDER_ID }}\"|" index.html
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
