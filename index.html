@@ -55,127 +55,50 @@
         
         <!-- Карта Flexatel для ООПТ и ГП с центровкой на Ленобласть -->
         <div class="map-container">
-		
-		<!-- БЛОК НАСТОЯЩЕГО ИИ-СОВЕТЧИКА -->
-<div style="background: #1a1a2e; color: white; border-radius: 16px; padding: 20px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-    <h3 style="margin: 0 0 5px 0; display: flex; align-items: center; gap: 10px;">
-        <span>🧠</span> 
-        <span>ИИ-справочник «Сова»</span>
-    </h3>
-    <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">
-        Спросите что угодно про ООПТ, качество воды, экологию, гидропосты. Нейросеть поймёт и ответит сама.
-    </p>
-    
-    <!-- Поле для вопроса -->
-    <div style="display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap;">
-        <input type="text" id="aiQuestion" placeholder="Например: почему вода в реке зеленеет?" style="flex: 1; padding: 12px 18px; border-radius: 40px; border: none; font-size: 15px;">
-        <button id="askAiBtn" style="background: #4a6fa5; color: white; border: none; padding: 12px 28px; border-radius: 40px; cursor: pointer; font-weight: bold; transition: 0.2s;">✨ Спросить ИИ</button>
-    </div>
-    
-    <!-- Индикатор загрузки -->
-    <div id="aiThinking" style="display: none; text-align: center; padding: 20px;">
-        🤔 ИИ анализирует вопрос... 
-    </div>
-    
-    <!-- Контейнер для ответа -->
-    <div id="aiAnswerBox" style="background: #16213e; border-radius: 16px; padding: 18px; margin-top: 10px; display: none; border-left: 5px solid #4a6fa5;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <strong style="font-size: 16px;">🤖 Ответ ИИ-эколога:</strong>
-            <button onclick="closeAnswer()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer;">✖</button>
-        </div>
-        <div id="aiAnswerText" style="line-height: 1.5; font-size: 15px;"></div>
-        <div style="font-size: 11px; color: #6c8db0; margin-top: 12px; border-top: 1px solid #1e2a47; padding-top: 8px;">
-           <!-- ⚡ Ответ сгенерирован нейросетью Hugging Face (DialoGPT)-->
-        </div>
-    </div>
-</div>
-
-<script>
-    // 🔑 ВАШ ТОКЕН (подставляется автоматически через GitHub Secrets)
-    const HF_TOKEN = "";
-    
-    // 🌐 АДРЕС МОДЕЛИ — Вариант А
-    const API_URL = "https://api-inference.huggingface.co/models/ai-forever/rugpt3medium_based_on_gpt2";
-    
-    async function askRealAI(question) {
-    const prompt = `Ты эколог. Отвечай кратко на русском. Вопрос: ${question}`;
-    
-    // Используем прокси чтобы обойти CORS
-    const proxyUrl = 'https://api.allorigins.win/raw?url=';
-    const targetUrl = `${API_URL}`;
-    
-    try {
-        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                inputs: prompt,
-                parameters: {
-                    max_length: 200,
-                    temperature: 0.7
-                }
-            })
-        });
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log("Ответ:", data);
-        
-        if (data && data[0] && data[0].generated_text) {
-            return data[0].generated_text.replace(prompt, '').trim();
-        } else if (typeof data === 'string') {
-            return data;
-        } else {
-            return "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
-        }
-    } catch (error) {
-        console.error("Ошибка:", error);
-        return "ИИ временно недоступен. Попробуйте позже.";
-    }
-}
-    
-    // Обработчик кнопки
-    document.getElementById('askAiBtn').onclick = async function() {
-        const question = document.getElementById('aiQuestion').value.trim();
-        if (!question) {
-            alert('Напишите вопрос!');
-            return;
-        }
-        
-        document.getElementById('aiThinking').style.display = 'block';
-        document.getElementById('aiAnswerBox').style.display = 'none';
-        
-        const answer = await askRealAI(question);
-        
-        document.getElementById('aiAnswerText').innerHTML = answer.replace(/\n/g, '<br>');
-        document.getElementById('aiAnswerBox').style.display = 'block';
-        document.getElementById('aiThinking').style.display = 'none';
-    };
-    
-    function closeAnswer() {
-        document.getElementById('aiAnswerBox').style.display = 'none';
-    }
-    
-    document.getElementById('aiQuestion').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('askAiBtn').click();
-    });
-</script>
-		
+            <!-- БЛОК ИИ-СПРАВОЧНИКА (РАБОТАЕТ ЧЕРЕЗ YANDEXGPT) -->
+            <div style="background: #1a1a2e; color: white; border-radius: 16px; padding: 20px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <h3 style="margin: 0 0 5px 0; display: flex; align-items: center; gap: 10px;">
+                    <span>🧠</span> 
+                    <span> Гидроэкологический ИИ-справочник </span>
+                </h3>
+                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">
+                    Спросите что угодно про ООПТ, качество воды, экологию, гидропосты. Нейросеть поймёт и ответит сама.
+                </p>
+                
+                <!-- Поле для вопроса -->
+                <div style="display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap;">
+                    <input type="text" id="aiQuestion" placeholder="Например: почему вода в реке зеленеет?" style="flex: 1; padding: 12px 18px; border-radius: 40px; border: none; font-size: 15px;">
+                    <button id="askAiBtn" style="background: #4a6fa5; color: white; border: none; padding: 12px 28px; border-radius: 40px; cursor: pointer; font-weight: bold; transition: 0.2s;">✨ Спросить ИИ</button>
+                </div>
+                
+                <!-- Индикатор загрузки -->
+                <div id="aiThinking" style="display: none; text-align: center; padding: 20px;">
+                    🤔 ИИ анализирует вопрос... 
+                </div>
+                
+                <!-- Контейнер для ответа -->
+                <div id="aiAnswerBox" style="background: #16213e; border-radius: 16px; padding: 18px; margin-top: 10px; display: none; border-left: 5px solid #4a6fa5;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong style="font-size: 16px;">🤖 Ответ ИИ-ученого:</strong>
+                        <button onclick="closeAnswer()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer;">✖</button>
+                    </div>
+                    <div id="aiAnswerText" style="line-height: 1.5; font-size: 15px;"></div>
+                    <div style="font-size: 11px; color: #6c8db0; margin-top: 12px; border-top: 1px solid #1e2a47; padding-top: 8px;">
+                    </div>
+                </div>
+            </div>
+            
             <iframe
-    src="https://gis.flexatel.xyz/viewer/86741d75-fe92-4dad-92d7-b42829517af0"
-    title="Карта ООПТ и ГП"
-    width="100%"
-    border-radius="24px"
-    height="100%"
-    style="min-height:800px; border: 0px; border-radius: 10px;"
-    allow="geolocation"
-    allowfullscreen>
-    </iframe>
+                src="https://gis.flexatel.xyz/viewer/86741d75-fe92-4dad-92d7-b42829517af0"
+                title="Карта ООПТ и ГП"
+                width="100%"
+                border-radius="24px"
+                height="100%"
+                style="min-height:800px; border: 0px; border-radius: 10px;"
+                allow="geolocation"
+                allowfullscreen>
+            </iframe>
         </div>
         
         <!-- Текст -->
@@ -188,6 +111,105 @@
         </div>
     </div>
 
+    <!-- СКРИПТ ИИ-СПРАВОЧНИКА (YANDEXGPT) -->
+    <script>
+        // 🔑 НАСТРОЙКИ YANDEXGPT (ОСТАВИТЬ ПУСТЫМИ — ПОДСТАВЯТСЯ ИЗ СЕКРЕТОВ GITHUB)
+        const YANDEX_API_KEY = "";
+        const YANDEX_FOLDER_ID = "";
+        
+        // Адрес API YandexGPT
+        const API_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion";
+        
+        async function askRealAI(question) {
+            const requestBody = {
+                "modelUri": `gpt://${YANDEX_FOLDER_ID}/yandexgpt-lite`,
+                "completionOptions": {
+                    "stream": false,
+                    "temperature": 0.7,
+                    "maxTokens": "500"
+                },
+                "messages": [
+    {
+        "role": "system",
+        "text": "Ты — научный эксперт по гидрологии, экологии водных систем и особо охраняемым природным территориям (ООПТ) Ленинградской области.\n\nТвоя задача — отвечать на вопросы пользователей чётко, научно обоснованно и полезно.\n\nПравила ответов:\n1. Используй достоверные данные из гидрологии и экологии.\n2. Если вопрос позволяет — приведи численные показатели (ПДК, нормативы pH, кислорода, нитратов и т.д.).\n3. При необходимости ссылайся на открытые научные источники: eLibrary РГГМУ (elib.rshu.ru), КиберЛенинку, научные статьи РАН, данные Росгидромета, Минприроды РФ.\n4. Формат ссылок: указывай название источника и тему, например: «Согласно данным из открытой библиотеки eLibrary РГГМУ (статья «Эвтрофикация малых рек Ленобласти»)».\n5. Отвечай на русском языке, грамотно, без лишней «воды». Избегай художественных отступлений.\n6. Если вопрос выходит за пределы твоей компетенции — честно скажи об этом и предложи, где можно найти информацию (Росгидромет, Минприроды, научные статьи).\n\nТы помогаешь просвещать людей в области экологии и гидрологии, поэтому давай ответы, которые повышают экологическую грамотность."
+    },
+    {
+        "role": "user",
+        "text": question
+    }
+]
+            };
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Api-Key ${YANDEX_API_KEY}`,
+                        'x-folder-id': YANDEX_FOLDER_ID
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Ошибка API:", response.status, errorText);
+                    
+                    if (response.status === 401) {
+                        return "❌ Ошибка авторизации. Проверьте API-ключ Yandex Cloud.";
+                    }
+                    if (response.status === 429) {
+                        return "⏳ Превышен лимит запросов. Подождите немного и попробуйте снова.";
+                    }
+                    return `Ошибка ${response.status}: ${errorText.substring(0, 150)}`;
+                }
+                
+                const data = await response.json();
+                console.log("Ответ YandexGPT:", data);
+                
+                if (data.result && data.result.alternatives && data.result.alternatives[0]) {
+                    return data.result.alternatives[0].message.text;
+                }
+                
+                if (data.error) {
+                    return `Ошибка от нейросети: ${data.error.message || data.error.description}`;
+                }
+                
+                return "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
+                
+            } catch (error) {
+                console.error("Сетевая ошибка:", error);
+                return "Ошибка соединения. Проверьте интернет и попробуйте снова.";
+            }
+        }
+        
+        // Обработчик кнопки
+        document.getElementById('askAiBtn').onclick = async function() {
+            const question = document.getElementById('aiQuestion').value.trim();
+            if (!question) {
+                alert('Напишите вопрос!');
+                return;
+            }
+            
+            document.getElementById('aiThinking').style.display = 'block';
+            document.getElementById('aiAnswerBox').style.display = 'none';
+            
+            const answer = await askRealAI(question);
+            
+            document.getElementById('aiAnswerText').innerHTML = answer.replace(/\n/g, '<br>');
+            document.getElementById('aiAnswerBox').style.display = 'block';
+            document.getElementById('aiThinking').style.display = 'none';
+        };
+        
+        function closeAnswer() {
+            document.getElementById('aiAnswerBox').style.display = 'none';
+        }
+        
+        document.getElementById('aiQuestion').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('askAiBtn').click();
+        });
+    </script>
+    
     <!-- Скрипт для даты -->
     <script>
         document.getElementById('lastUpdate').textContent = 
