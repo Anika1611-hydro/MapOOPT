@@ -96,10 +96,10 @@
     
     // 🌐 АДРЕС МОДЕЛИ (выберите ОДИН вариант)
     // Вариант А: русскоязычная GPT (рекомендую)
-   // const API_URL = "https://api-inference.huggingface.co/models/ai-forever/rugpt3medium_based_on_gpt2";
+    const API_URL = "https://api-inference.huggingface.co/models/ai-forever/rugpt3medium_based_on_gpt2";
     
     // Вариант Б: если А не работает, раскомментируйте эту строку и закомментируйте А
-     const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+    // const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
     
     async function askRealAI(question) {
         const prompt = `Ты эколог. Отвечай кратко на русском. Вопрос: ${question}`;
