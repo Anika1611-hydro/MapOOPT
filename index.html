@@ -91,110 +91,83 @@
 </div>
 
 <script>
-    // 🔑 ВАШ ТОКЕН ОТ HUGGING FACE (вставьте сюда)
-    const HF_TOKEN = "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"; // ЗАМЕНИТЕ НА ВАШ ТОКЕН!
+    // 🔑 ВАШ ТОКЕН (один, настоящий)
+    const HF_TOKEN = "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";
     
-    // Адрес нейросети (НЕ УДАЛЯТЬ)
-    const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+    // 🌐 АДРЕС МОДЕЛИ (выберите ОДИН вариант)
+    // Вариант А: русскоязычная GPT (рекомендую)
+   // const API_URL = "https://api-inference.huggingface.co/models/ai-forever/rugpt3medium_based_on_gpt2";
     
-    // Функция отправки запроса к ИИ
+    // Вариант Б: если А не работает, раскомментируйте эту строку и закомментируйте А
+     const API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium";
+    
     async function askRealAI(question) {
-        // Оборачиваем вопрос в инструкцию для ИИ
-        const prompt = `Ты эколог-эксперт по ООПТ и качеству воды. Отвечай на русском языке кратко, понятно и полезно. Вопрос: ${question}`;
+        const prompt = `Ты эколог. Отвечай кратко на русском. Вопрос: ${question}`;
         
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${HF_TOKEN}`
-            },
-            body: JSON.stringify({ 
-                inputs: prompt,
-                parameters: {
-                    max_length: 250,
-                    temperature: 0.7
-                }
-            })
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Ошибка API:", response.status, errorText);
-            throw new Error(`Ошибка ${response.status}: ${errorText.substring(0, 100)}`);
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${HF_TOKEN}`
+                },
+                body: JSON.stringify({ 
+                    inputs: prompt,
+                    parameters: {
+                        max_new_tokens: 150,
+                        temperature: 0.7,
+                        return_full_text: false
+                    }
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                console.error("Ошибка:", error);
+                return `Ошибка ${response.status}: ${error.error || 'неизвестная ошибка'}`;
+            }
+            
+            const data = await response.json();
+            console.log("Ответ:", data);
+            
+            // Извлекаем текст ответа
+            if (data && data[0] && data[0].generated_text) {
+                return data[0].generated_text;
+            } else if (typeof data === 'string') {
+                return data;
+            } else {
+                return "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
+            }
+        } catch (error) {
+            console.error("Сетевая ошибка:", error);
+            return "Ошибка соединения. Проверьте интернет и попробуйте снова.";
         }
-        
-        const data = await response.json();
-        console.log("Ответ от ИИ:", data); // Для отладки в консоли
-        
-        // Извлекаем ответ (разные модели возвращают в разном формате)
-        let answer = "";
-        if (typeof data === "string") {
-            answer = data;
-        } else if (data.generated_text) {
-            answer = data.generated_text;
-        } else if (Array.isArray(data) && data[0] && data[0].generated_text) {
-            answer = data[0].generated_text;
-        } else {
-            answer = "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
-        }
-        
-        // Убираем из ответа повтор промпта
-        answer = answer.replace(prompt, "").trim();
-        
-        return answer || "Извините, нейросеть не смогла сформулировать ответ. Задайте вопрос проще.";
     }
     
-    // Обработчик кнопки "Спросить ИИ"
+    // Обработчик кнопки (остаётся без изменений)
     document.getElementById('askAiBtn').onclick = async function() {
-        const questionInput = document.getElementById('aiQuestion');
-        const question = questionInput.value.trim();
-        
+        const question = document.getElementById('aiQuestion').value.trim();
         if (!question) {
-            alert('Напишите ваш вопрос про экологию, воду или ООПТ');
+            alert('Напишите вопрос!');
             return;
         }
         
-        // Показываем индикатор загрузки, прячем старый ответ
-        const thinkingDiv = document.getElementById('aiThinking');
-        const answerBox = document.getElementById('aiAnswerBox');
-        const answerText = document.getElementById('aiAnswerText');
+        document.getElementById('aiThinking').style.display = 'block';
+        document.getElementById('aiAnswerBox').style.display = 'none';
         
-        thinkingDiv.style.display = 'block';
-        answerBox.style.display = 'none';
+        const answer = await askRealAI(question);
         
-        try {
-            const answer = await askRealAI(question);
-            answerText.innerHTML = answer.replace(/\n/g, '<br>');
-            answerBox.style.display = 'block';
-        } catch (error) {
-            console.error("Ошибка:", error);
-            let errorMsg = "❌ ИИ временно недоступен. ";
-            if (error.message.includes("401") || error.message.includes("403")) {
-                errorMsg += "Проверьте правильность токена Hugging Face.";
-            } else if (error.message.includes("429")) {
-                errorMsg += "Слишком много запросов. Подождите минуту и попробуйте снова.";
-            } else if (error.message.includes("503")) {
-                errorMsg += "Модель загружается. Подождите 10 секунд и повторите запрос.";
-            } else {
-                errorMsg += "Попробуйте позже или задайте вопрос иначе.";
-            }
-            answerText.innerHTML = errorMsg;
-            answerBox.style.display = 'block';
-        } finally {
-            thinkingDiv.style.display = 'none';
-        }
+        document.getElementById('aiAnswerText').innerHTML = answer.replace(/\n/g, '<br>');
+        document.getElementById('aiAnswerBox').style.display = 'block';
+        document.getElementById('aiThinking').style.display = 'none';
     };
     
-    // Функция закрытия ответа
     function closeAnswer() {
         document.getElementById('aiAnswerBox').style.display = 'none';
     }
     
-    // Отправка по нажатию Enter в поле ввода
     document.getElementById('aiQuestion').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('askAiBtn').click();
-        }
+        if (e.key === 'Enter') document.getElementById('askAiBtn').click();
     });
 </script>
 		
