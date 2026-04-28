@@ -98,59 +98,46 @@
     const API_URL = "https://api-inference.huggingface.co/models/ai-forever/rugpt3medium_based_on_gpt2";
     
     async function askRealAI(question) {
-        const prompt = `Отвечай кратко на русском. Вопрос: ${question}\nОтвет:`;
-        
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${HF_TOKEN}`
-                },
-                body: JSON.stringify({ 
-                    inputs: prompt,
-                    parameters: {
-                        max_length: 200,
-                        temperature: 0.8,
-                        do_sample: true,
-                        top_p: 0.9
-                    }
-                })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                console.error("Ошибка API:", response.status, error);
-                
-                if (response.status === 503) {
-                    return "⏳ Модель ИИ загружается. Подождите 20-30 секунд и повторите вопрос.";
+    const prompt = `Ты эколог. Отвечай кратко на русском. Вопрос: ${question}`;
+    
+    // Используем прокси чтобы обойти CORS
+    const proxyUrl = 'https://api.allorigins.win/raw?url=';
+    const targetUrl = `${API_URL}`;
+    
+    try {
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                inputs: prompt,
+                parameters: {
+                    max_length: 200,
+                    temperature: 0.7
                 }
-                
-                return `Ошибка ${response.status}: ${error.error || 'неизвестная ошибка'}`;
-            }
-            
-            const data = await response.json();
-            console.log("Ответ от ИИ:", data);
-            
-            if (typeof data === 'string') {
-                return data.replace(prompt, '').trim();
-            }
-            
-            if (Array.isArray(data) && data[0] && data[0].generated_text) {
-                return data[0].generated_text.replace(prompt, '').trim();
-            }
-            
-            if (data.generated_text) {
-                return data.generated_text.replace(prompt, '').trim();
-            }
-            
-            return "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
-            
-        } catch (error) {
-            console.error("Сетевая ошибка:", error);
-            return "Ошибка соединения. Проверьте интернет и попробуйте снова.";
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
+        
+        const data = await response.json();
+        console.log("Ответ:", data);
+        
+        if (data && data[0] && data[0].generated_text) {
+            return data[0].generated_text.replace(prompt, '').trim();
+        } else if (typeof data === 'string') {
+            return data;
+        } else {
+            return "Не удалось получить ответ. Попробуйте переформулировать вопрос.";
+        }
+    } catch (error) {
+        console.error("Ошибка:", error);
+        return "ИИ временно недоступен. Попробуйте позже.";
     }
+}
     
     // Обработчик кнопки
     document.getElementById('askAiBtn').onclick = async function() {
