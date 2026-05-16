@@ -113,6 +113,11 @@
         // ============================================================
         const PROXY_URL = "https://yandex-gpt-proxy.onrender.com/ask";
         
+        // ============================================================
+        // ПРОМПТ ДЛЯ ЭКОЛОГА (передаётся в прокси)
+        // ============================================================
+        const SYSTEM_PROMPT = "Ты эколог-эксперт по ООПТ, гидрологии и качеству воды в Ленинградской области. Отвечай на русском языке кратко, понятно и полезно. Используй факты и цифры.";
+        
         async function askRealAI(question) {
             try {
                 const response = await fetch(PROXY_URL, {
@@ -120,7 +125,10 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ question: question })
+                    body: JSON.stringify({ 
+                        question: question,
+                        system_prompt: SYSTEM_PROMPT   // 👈 передаём промпт в прокси
+                    })
                 });
                 
                 if (!response.ok) {
